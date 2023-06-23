@@ -14,6 +14,11 @@ const emailVerificationTokenSchema = mongoose.Schema({
   },
 });
 
+emailVerificationTokenSchema.methods.compareToken = async function (token) {
+  const result = await bcrypt.compare(token, this.token);
+  return result;
+};
+
 emailVerificationTokenSchema.pre("save", async function (next) {
   if (this.isModified("token")) {
     this.token = await bcrypt.hash(this.token, 10);
