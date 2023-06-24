@@ -3,6 +3,7 @@ const User = require("../models/user");
 const EmailVerificationToken = require("../models/emailVerificationToken");
 const nodemailer = require("nodemailer");
 const { isValidObjectId } = require("mongoose");
+const { generateOTP } = require("../lib");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -20,10 +21,7 @@ exports.create = async (req, res) => {
 
   await newUser.save();
 
-  let OTP = "";
-  for (let i = 0; i <= otpLength; i++) {
-    OTP += Math.round(Math.random() * 9);
-  }
+  const OTP = generateOTP();
 
   const newEmailVerificationToken = new EmailVerificationToken({
     owner: newUser._id,
@@ -95,10 +93,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
       error: "Only after one hour new token can be generated",
     });
 
-  let OTP = "";
-  for (let i = 0; i <= otpLength; i++) {
-    OTP += Math.round(Math.random() * 9);
-  }
+  const OTP = generateOTP();
 
   const newEmailVerificationToken = new EmailVerificationToken({
     owner: user._id,
