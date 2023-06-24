@@ -3,15 +3,14 @@ const User = require("../models/user");
 const EmailVerificationToken = require("../models/emailVerificationToken");
 const nodemailer = require("nodemailer");
 const { isValidObjectId } = require("mongoose");
-const { generateOTP, generateMailTransporter } = require("../lib");
+const { generateOTP, generateMailTransporter, sendError } = require("../lib");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
 
-  if (userExists)
-    return res.status(401).json({ error: "This email is already in use" });
+  if (userExists) return sendError(res, "This email is already in use");
 
   const newUser = new User({
     name,
@@ -47,19 +46,19 @@ exports.create = async (req, res) => {
 exports.verifyEmail = async (req, res) => {
   const { userId, OTP } = req.body;
 
-  if (!isValidObjectId(userId)) return res.json({ error: "Invalid user" });
+  if (!isValidObjectId(userId)) return sendError(res, "Invalid user");
 
   const user = await User.findById(userId);
 
-  if (user.isVerified) return res.json({ error: "User is already verified" });
+  if (user.isVerified) return sendError(res, "User is already verified");
 
   const token = await EmailVerificationToken.findOne({ owner: userId });
 
-  if (!token) return res.json({ error: "Token not found" });
+  if (!token) return sendError(res, "Token not found");
 
   const isMatched = token.compareToken(OTP);
 
-  if (!isMatched) return res.json({ error: "Please submit a valid OTP" });
+  if (!isMatched) return sendError(res, "Please submit a valid OTP");
 
   user.isVerified = true;
 
@@ -74,17 +73,15 @@ exports.resendEmailVerificationToken = async (req, res) => {
   const { userId } = req.body;
 
   const user = await User.findById(userId);
-  if (!user) return res.json({ error: "User not found" });
+  if (!user) return sendError(res, "User not found");
 
   if (user.isVerified)
-    return res.json({ error: "This email is already verified" });
+    return sendError(res, "This email is already in verified");
 
   const tokenExist = await EmailVerificationToken.findOne({ owner: userId });
 
   if (tokenExist)
-    return res.json({
-      error: "Only after one hour new token can be generated",
-    });
+    return sendError(res, "Only after one hour new token can be generated");
 
   const OTP = generateOTP();
 
