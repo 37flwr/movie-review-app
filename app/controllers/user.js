@@ -1,7 +1,7 @@
-const { otpLength } = require("../constants/otpLength");
+const crypto = require("crypto");
 const User = require("../models/user");
+const PasswordResetToken = require("../models/passwordResetToken");
 const EmailVerificationToken = require("../models/emailVerificationToken");
-const nodemailer = require("nodemailer");
 const { isValidObjectId } = require("mongoose");
 const { generateOTP, generateMailTransporter, sendError } = require("../lib");
 const { sendSuccess } = require("../lib/helper");
@@ -90,7 +90,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
   });
   await newEmailVerificationToken.save();
 
-  var transport = generateMailTransporter();
+  const transport = generateMailTransporter();
 
   transport.sendMail({
     from: "verification@reviewapp.com",
@@ -101,4 +101,38 @@ exports.resendEmailVerificationToken = async (req, res) => {
   });
 
   sendSuccess(res, "Please verify your email. OTP has been sent to your email");
+};
+
+exports.forgetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return sendError(res, "Email is missing");
+
+  const user = User.findOne({ email });
+  if (!user) return sendError(res, "No user found");
+
+  const alreadyHasToken = await PasswordResetToken.findOne({ owner: user._id });
+  if (alreadyHasToken)
+    return sendError(res, "You can request new token after one hour");
+
+  const token = generateRandomBytes();
+  const newPasswordResetToken = await PasswordResetToken({
+    owner: user._id,
+    token,
+  });
+  await newPasswordResetToken.save();
+
+  const resetPasswordUrl = `http://localhost:3000/reset-password?token=${token}&id=${user._id}`;
+
+  const transport = generateMailTransporter();
+
+  transport.sendMail({
+    from: "verification@reviewapp.com",
+    to: user.email,
+    subject: "Reset Password Link",
+    html: `
+    <p>Click here to reset password</p><a href=${resetPasswordUrl}>Change Password</a>`,
+  });
+
+  sendSuccess(res, "Link has been sent to your email");
 };
