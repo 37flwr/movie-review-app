@@ -107,7 +107,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
   sendSuccess(res, "Please verify your email. OTP has been sent to your email");
 };
 
-exports.resetPassword = async (req, res) => {
+exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
 
   if (!email) return sendError(res, "Email is missing");
