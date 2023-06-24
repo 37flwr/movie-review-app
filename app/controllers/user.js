@@ -140,3 +140,7 @@ exports.resetPassword = async (req, res) => {
 
   sendSuccess(res, "Link has been sent to your email");
 };
+
+exports.sendResetPasswordTokenStatus = async (req, res) => {
+  res.json({ valid: true });
+};
