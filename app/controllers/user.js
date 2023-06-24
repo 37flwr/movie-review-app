@@ -141,6 +141,23 @@ exports.forgetPassword = async (req, res) => {
   sendSuccess(res, "Link has been sent to your email");
 };
 
-exports.sendResetPasswordTokenStatus = async (req, res) => {
+exports.sendResetPasswordTokenStatus = (req, res) => {
   res.json({ valid: true });
+};
+
+exports.resetPassword = async (req, res) => {
+  const { newPassword, userId } = req.body;
+
+  const user = await User.findById(userId);
+
+  const matched = await user.comparePassword(newPassword);
+  if (matched)
+    return sendError(res, "New password must be different from old one");
+
+  user.password = newPassword;
+  await user.save();
+
+  await PasswordResetToken.findByIdAndDelete(req.resetToken._id);
+
+  sendSuccess(res, "Password has been reset successfully");
 };
