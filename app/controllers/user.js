@@ -4,6 +4,7 @@ const EmailVerificationToken = require("../models/emailVerificationToken");
 const nodemailer = require("nodemailer");
 const { isValidObjectId } = require("mongoose");
 const { generateOTP, generateMailTransporter, sendError } = require("../lib");
+const { sendSuccess } = require("../lib/helper");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -38,9 +39,7 @@ exports.create = async (req, res) => {
     <p>Your verification token</p><h1>${OTP}</h1>`,
   });
 
-  res.status(201).json({
-    message: "Please verify your email. OTP has been sent to your email",
-  });
+  sendSuccess(res, "Please verify your email. OTP has been sent to your email");
 };
 
 exports.verifyEmail = async (req, res) => {
@@ -66,7 +65,7 @@ exports.verifyEmail = async (req, res) => {
 
   await EmailVerificationToken.findByIdAndDelete(token._id);
 
-  res.json({ message: "Your email has been successfully verified" });
+  sendSuccess(res, "Your email has been successfully verified");
 };
 
 exports.resendEmailVerificationToken = async (req, res) => {
@@ -101,7 +100,5 @@ exports.resendEmailVerificationToken = async (req, res) => {
     <p>Your verification token</p><h1>${OTP}</h1>`,
   });
 
-  res.status(201).json({
-    message: "Please verify your email. OTP has been sent to your email",
-  });
+  sendSuccess(res, "Please verify your email. OTP has been sent to your email");
 };
