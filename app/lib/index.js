@@ -1,9 +1,6 @@
-const generateOTP = require("./mail");
-const generateMailTransporter = require("./mail");
+const { generateOTP, generateMailTransporter } = require("./mail");
 
-const sendError = require("./helper");
-const sendSuccess = require("./helper");
-const generateRandomBytes = require("./helper");
+const { sendError, sendSuccess, generateRandomBytes } = require("./helper");
 
 module.exports = {
   generateOTP,

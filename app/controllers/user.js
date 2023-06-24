@@ -1,10 +1,14 @@
-const crypto = require("crypto");
 const User = require("../models/user");
 const PasswordResetToken = require("../models/passwordResetToken");
 const EmailVerificationToken = require("../models/emailVerificationToken");
 const { isValidObjectId } = require("mongoose");
-const { generateOTP, generateMailTransporter, sendError } = require("../lib");
-const { sendSuccess } = require("../lib/helper");
+const {
+  generateOTP,
+  generateMailTransporter,
+  sendError,
+  sendSuccess,
+  generateRandomBytes,
+} = require("../lib");
 
 exports.create = async (req, res) => {
   const { name, email, password } = req.body;
@@ -108,14 +112,14 @@ exports.resetPassword = async (req, res) => {
 
   if (!email) return sendError(res, "Email is missing");
 
-  const user = User.findOne({ email });
+  const user = await User.findOne({ email });
   if (!user) return sendError(res, "No user found");
 
   const alreadyHasToken = await PasswordResetToken.findOne({ owner: user._id });
   if (alreadyHasToken)
     return sendError(res, "You can request new token after one hour");
 
-  const token = generateRandomBytes();
+  const token = await generateRandomBytes();
   const newPasswordResetToken = await PasswordResetToken({
     owner: user._id,
     token,
