@@ -72,7 +72,7 @@ exports.resendEmailVerificationToken = async (req, res) => {
   const { userId } = req.body;
 
   const user = await User.findById(userId);
-  if (!user) return sendError(res, "User not found");
+  if (!user) return sendError(res, "User not found", 404);
 
   if (user.isVerified)
     return sendError(res, "This email is already in verified");
