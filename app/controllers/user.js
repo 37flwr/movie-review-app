@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const PasswordResetToken = require("../models/passwordResetToken");
 const EmailVerificationToken = require("../models/emailVerificationToken");
@@ -160,4 +161,20 @@ exports.resetPassword = async (req, res) => {
   await PasswordResetToken.findByIdAndDelete(req.resetToken._id);
 
   sendSuccess(res, "Password has been reset successfully");
+};
+
+exports.signIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) return sendError(res, "Credentials mismatch");
+
+  const matched = await user.comparePassword(password);
+  if (!matched) return sendError(res, "Password mismatched");
+
+  const { name, _id } = user;
+
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+  res.json({ user: { id: _id, name, email, token: jwtToken } });
 };
