@@ -174,10 +174,7 @@ exports.signIn = async (req, res) => {
 
   const { name, _id } = user;
 
-  const jwtToken = jwt.sign(
-    { userId: user._id },
-    "asdjajndsbvijpt935tg3bgvbhja"
-  );
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
   res.json({ user: { id: _id, name, email, token: jwtToken } });
 };
