@@ -9,8 +9,6 @@ const formFields = [
   },
 ];
 
-const renderFormFields = () => {
-  return formFields.map((el) => <FormInput {...el} />);
-};
+const renderFormFields = () => formFields.map((el) => <FormInput {...el} />);
 
 export default renderFormFields;
