@@ -1,14 +1,13 @@
 import React from "react";
 import BasicLayout from "../layout/BasicLayout";
+import Title from "../form/Title";
 
 const SignIn = () => {
   return (
     <div className="fixed inset-0 bg-primary -z-10 flex justify-center items-center">
       <BasicLayout>
         <form action="" className="bg-secondary rounded p-6 w-96">
-          <h1 className="text-xl text-white font-semibold text-center">
-            Sign in
-          </h1>
+          <Title>Sign in</Title>
           <div className="flex flex-col-reverse">
             <input
               type="text"
