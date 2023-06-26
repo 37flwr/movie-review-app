@@ -1,10 +1,10 @@
-import React from "react";
 import { BsFillSunFill } from "react-icons/bs";
+import BasicLayout from "../layout/BasicLayout";
 
 const Navbar = () => {
   return (
-    <div className="bg-secondary">
-      <div className="max-w-screen-xl mx-auto p-2 flex justify-between items-center">
+    <div className="bg-secondary shadow-sm shadow-gray-500">
+      <BasicLayout className="p-2 flex justify-between items-center">
         <img src="./logo.png" alt="" className="h-10" />
         <ul className="flex items-center space-x-4">
           <li>
@@ -21,7 +21,7 @@ const Navbar = () => {
           </li>
           <li className="text-white font-semibold text-lg">Login</li>
         </ul>
-      </div>
+      </BasicLayout>
     </div>
   );
 };
