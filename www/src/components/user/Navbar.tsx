@@ -4,7 +4,7 @@ import BasicLayout from "../layout/BasicLayout";
 const Navbar = () => {
   return (
     <div className="bg-secondary shadow-sm shadow-gray-500">
-      <BasicLayout className="p-2">
+      <BasicLayout className="p-2 flex justify-between items-center">
         <img src="./logo.png" alt="" className="h-10" />
         <ul className="flex items-center space-x-4">
           <li>
