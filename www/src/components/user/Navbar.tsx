@@ -3,7 +3,7 @@ import BasicLayout from "../layout/BasicLayout";
 
 const Navbar = () => {
   return (
-    <div className="bg-secondary">
+    <div className="bg-secondary shadow-sm shadow-gray-500">
       <BasicLayout className="p-2">
         <img src="./logo.png" alt="" className="h-10" />
         <ul className="flex items-center space-x-4">
